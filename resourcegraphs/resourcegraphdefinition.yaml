@@ -58,27 +58,25 @@ spec:
 
     - id: ingress
       includeWhen:
-        - ${schema.spec.ingress.enabled} # Only include if the user wants to create an Ingress
+        - ${schema.spec.ingress.enabled}
       template:
         apiVersion: networking.k8s.io/v1
         kind: Ingress
         metadata:
           name: ${schema.spec.name}-ingress
           annotations:
-            kubernetes.io/ingress.class: alb
-            alb.ingress.kubernetes.io/scheme: internet-facing
-            alb.ingress.kubernetes.io/target-type: ip
-            alb.ingress.kubernetes.io/healthcheck-path: /health
-            alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-            alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=60
+            kubernetes.io/ingress.class: nginx
+            nginx.ingress.kubernetes.io/rewrite-target: /
         spec:
           rules:
-            - http:
+            - host: ${schema.spec.name}.local
+              http:
                 paths:
                   - path: "/"
                     pathType: Prefix
                     backend:
                       service:
-                        name: ${service.metadata.name} # Use the service name
+                        name: ${service.metadata.name}
                         port:
                           number: 80
+
