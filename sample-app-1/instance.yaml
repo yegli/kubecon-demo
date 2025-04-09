@@ -1,0 +1,9 @@
+apiVersion: kro.run/v1alpha1
+kind: Application
+metadata:
+  name: my-application-instance
+  namespace: sample-app
+spec:
+  name: my-awesome-app
+  ingress:
+    enabled: false
