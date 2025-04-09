@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: resourcegraphs
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/yegli/kubecon-demo.git
+    targetRevision: "master"
+    path: "resourcegraphs"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: resourcegraphs
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
