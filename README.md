@@ -19,8 +19,14 @@ By the end of this demo, you will:
    ```
 
 ## Basics
-1. install minikube `brew install minikube`
-2. run minikube cluster `minikube start --driver=docker --addons=metrics-server`
+1. install minikube: 
+```
+brew install minikube
+```
+2. run minikube cluster:
+```
+minikube start --driver=docker --addons=metrics-server
+```
 
 ## Install Headlamp 
 
@@ -65,9 +71,14 @@ helm install kro oci://ghcr.io/kro-run/kro/kro \
 
 
 ## Enabling ArgoCD Plugin
- Create a custom namespace ```k create ns argocd```then through the headlamp UI under Apps section select argo-cd and install it into your new namespace.
+ Create a custom namespace:
+ ```
+ kubectl create ns argocd
+ ```
+ 
+ Then through the headlamp UI under Apps section select argo-cd and install it into your new namespace.
 
-Retrieve the Admin User Credentials:
+Retrieve the Admin User Credentials once the chart has been deployed succesfully:
 ```sh
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 ```
@@ -80,11 +91,22 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 Define your Application Manifests in your Repository. You can find a sample application here: https://code.swisscom.com/yanick.egli/kubecon-demo-manifests#
 
 ### Integrate with ArgoCD
-Create two dedicated applications for both the `resourcegraphs` subdirectory and the `sample-app`. This should deploy the resourcegraphdefinition CRD and an instance of said Application in the sample-app namespace.
 
-## Connecting via Ingress
-To access the newly created webapplication via ingress an ingress controller must be installed. This demo works with the nginx ingress-controller. Create the namespace and then deploy the ingress controller helm chart through headlamp.
-```sh
-k create ns nginx
+#### Add Repository
+Add the repository as HTTPS with the `Repository URL` set to 
 ```
+https://github.com/yegli/kubecon-demo.git
+```
+
+
+Create an Application for the `argocd-root-app` subdirectory through the Web UI. This should spin up the following apps
+1. ResourceGraphsDefinition (collection of all the KRO Custom API definitions)
+2. Sample App 1 for Team A (default image, ingress enabled)
+3. Sample App 2 for Team B (custom image, ingress disabled)
+
+## Conclusion
+Now you got to deploy your first ResourceGraphDefinition and two corresponding applications. You were able to configure both seperately but still profit from the simplicity of using the same Application Template.
+
+## Clean Up
+Once you are done exporing you can either stop your minikube cluster to resume to your development environment later by running `minikube stop`or you can completely remove the cluster by running `minikube destroy`
 

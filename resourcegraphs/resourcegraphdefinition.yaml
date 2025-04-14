@@ -3,30 +3,26 @@ kind: ResourceGraphDefinition
 metadata:
   name: my-application
 spec:
-  # kro uses this simple schema to create your CRD schema and apply it
-  # The schema defines what users can provide when they instantiate the RGD (create an instance).
   schema:
     apiVersion: v1alpha1
     kind: Application
     spec:
-      # Spec fields that users can provide.
       name: string
       image: string | default="nginx"
       ingress:
         enabled: boolean | default=false
+      port: integer | default=80
     status:
-      # Fields the controller will inject into instances status.
       deploymentConditions: ${deployment.status.conditions}
       availableReplicas: ${deployment.status.availableReplicas}
 
-  # Define the resources this API will manage.
   resources:
     - id: deployment
       template:
         apiVersion: apps/v1
         kind: Deployment
         metadata:
-          name: ${schema.spec.name} # Use the name provided by user
+          name: ${schema.spec.name}
         spec:
           replicas: 3
           selector:
@@ -39,9 +35,9 @@ spec:
             spec:
               containers:
                 - name: ${schema.spec.name}
-                  image: ${schema.spec.image} # Use the image provided by user
+                  image: ${schema.spec.image}
                   ports:
-                    - containerPort: 80
+                    - containerPort: ${schema.spec.port}
 
     - id: service
       template:
@@ -50,11 +46,11 @@ spec:
         metadata:
           name: ${schema.spec.name}-service
         spec:
-          selector: ${deployment.spec.selector.matchLabels} # Use the deployment selector
+          selector: ${deployment.spec.selector.matchLabels}
           ports:
             - protocol: TCP
-              port: 80
-              targetPort: 80
+              port: ${schema.spec.port}
+              targetPort: ${schema.spec.port}
 
     - id: ingress
       includeWhen:
@@ -78,5 +74,5 @@ spec:
                       service:
                         name: ${service.metadata.name}
                         port:
-                          number: 80
+                          number: ${schema.spec.port}
 

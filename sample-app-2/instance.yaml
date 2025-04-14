@@ -2,8 +2,9 @@ apiVersion: kro.run/v1alpha1
 kind: Application
 metadata:
   name: my-application-instance
-  namespace: sample-app
+  namespace: sample-app-2
 spec:
-  name: my-awesome-app
+  name: my-awesome-app-2
+  image: busybox
   ingress:
-    enabled: true
+    enabled: false
