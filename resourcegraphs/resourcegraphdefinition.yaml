@@ -12,12 +12,16 @@ spec:
       ingress:
         enabled: boolean | default=false
       port: integer | default=80
+      ha:
+        enabled: boolean | default=false
     status:
       deploymentConditions: ${deployment.status.conditions}
       availableReplicas: ${deployment.status.availableReplicas}
 
   resources:
     - id: deployment
+      includeWhen:
+        - ${!schema.spec.ha.enabled}
       template:
         apiVersion: apps/v1
         kind: Deployment
@@ -33,6 +37,40 @@ spec:
               labels:
                 app: ${schema.spec.name}
             spec:
+              containers:
+                - name: ${schema.spec.name}
+                  image: ${schema.spec.image}
+                  ports:
+                    - containerPort: ${schema.spec.port}
+
+    - id: replicaset
+      includeWhen:
+        - ${schema.spec.ha.enabled}
+      template:
+        apiVersion: apps/v1
+        kind: ReplicaSet
+        metadata:
+          name: ${schema.spec.name}-rs
+        spec:
+          replicas: 3
+          selector:
+            matchLabels:
+              app: ${schema.spec.name}
+          template:
+            metadata:
+              labels:
+                app: ${schema.spec.name}
+            spec:
+              affinity:
+                podAntiAffinity:
+                  requiredDuringSchedulingIgnoredDuringExecution:
+                    - labelSelector:
+                        matchExpressions:
+                          - key: app
+                            operator: In
+                            values:
+                              - ${schema.spec.name}
+                      topologyKey: "kubernetes.io/hostname"
               containers:
                 - name: ${schema.spec.name}
                   image: ${schema.spec.image}
@@ -75,4 +113,3 @@ spec:
                         name: ${service.metadata.name}
                         port:
                           number: ${schema.spec.port}
-

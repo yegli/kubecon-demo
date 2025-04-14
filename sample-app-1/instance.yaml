@@ -5,5 +5,7 @@ metadata:
   namespace: sample-app-1
 spec:
   name: my-awesome-app-1
+  ha:
+    enabled: true
   ingress:
     enabled: true

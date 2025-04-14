@@ -25,7 +25,7 @@ brew install minikube
 ```
 2. run minikube cluster:
 ```
-minikube start --driver=docker --addons=metrics-server
+minikube start --driver=docker --addons=metrics-server --nodes=3
 ```
 
 ## Install Headlamp 
@@ -101,8 +101,8 @@ https://github.com/yegli/kubecon-demo.git
 
 Create an Application for the `argocd-root-app` subdirectory through the Web UI. This should spin up the following apps
 1. ResourceGraphsDefinition (collection of all the KRO Custom API definitions)
-2. Sample App 1 for Team A (default image, ingress enabled)
-3. Sample App 2 for Team B (custom image, ingress disabled)
+2. Sample App 1 for Team A (default image, ingress enabled, ha enabled)
+3. Sample App 2 for Team B (custom image, ingress disabled, ha disabled)
 
 ## Conclusion
 Now you got to deploy your first ResourceGraphDefinition and two corresponding applications. You were able to configure both seperately but still profit from the simplicity of using the same Application Template.
