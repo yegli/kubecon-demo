@@ -5,6 +5,8 @@ metadata:
   namespace: sample-app-2
 spec:
   name: my-awesome-app-2
-  image: busybox
+  image: nginx:1.21.1
   ingress:
+    enabled: true
+  ha:
     enabled: false

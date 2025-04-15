@@ -19,9 +19,23 @@ spec:
       availableReplicas: ${deployment.status.availableReplicas}
 
   resources:
+    - id: service
+      template:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: ${schema.spec.name}-service
+        spec:
+          selector:
+            app: ${schema.spec.name}
+          ports:
+            - protocol: TCP
+              port: ${schema.spec.port}
+              targetPort: ${schema.spec.port}
+
     - id: deployment
       includeWhen:
-        - ${!schema.spec.ha.enabled}
+        - ${schema.spec.ha.enabled == false}
       template:
         apiVersion: apps/v1
         kind: Deployment
@@ -76,19 +90,6 @@ spec:
                   image: ${schema.spec.image}
                   ports:
                     - containerPort: ${schema.spec.port}
-
-    - id: service
-      template:
-        apiVersion: v1
-        kind: Service
-        metadata:
-          name: ${schema.spec.name}-service
-        spec:
-          selector: ${deployment.spec.selector.matchLabels}
-          ports:
-            - protocol: TCP
-              port: ${schema.spec.port}
-              targetPort: ${schema.spec.port}
 
     - id: ingress
       includeWhen:

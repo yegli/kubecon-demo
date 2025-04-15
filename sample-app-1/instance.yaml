@@ -5,7 +5,8 @@ metadata:
   namespace: sample-app-1
 spec:
   name: my-awesome-app-1
-  ha:
-    enabled: true
+  image: nginx:1.21.1
   ingress:
+    enabled: false
+  ha:
     enabled: true
