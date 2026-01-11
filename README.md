@@ -24,7 +24,7 @@ By the end of this demo, you will:
 brew install minikube
 ```
 2. run minikube cluster:
-```
+```sh
 minikube start --driver=docker --addons=metrics-server --nodes=3
 ```
 
@@ -72,7 +72,7 @@ helm install kro oci://ghcr.io/kro-run/kro/kro \
 
 ## Enabling ArgoCD Plugin
  Create a custom namespace:
- ```
+ ```sh
  kubectl create ns argocd
  ```
  
